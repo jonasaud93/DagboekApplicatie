@@ -2,6 +2,7 @@ package be.hogent.dagboekapplicatie;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.ContentProvider;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -19,35 +20,38 @@ import be.hogent.dagboekapplicatie.persistence.MyDB;
  */
 public class DisplayDiaries extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    /**
-     * The database we are storing the database entries
-     */
+    private static final int URL_LOADER = 0;
     private MyDB dba;
-    /**
-     * The DiaryAdapter to show the diary entries
-     */
+
     private DiaryAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dba = new MyDB(this);
+        adapter = new DiaryAdapter(dba,this);
 
-
+        getLoaderManager().initLoader(URL_LOADER, null, this);
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
+         String[] projection = {Constants.COL_TITLE, Constants.COL_DATE, Constants.COL_DESCRIPTION};
+         return new CursorLoader(this, DiaryContentProvider.CONTENT_URI, projection, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ;
+        adapter.notifyDataSetChanged();
+        //adapter.swapCursor(data)
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        adapter.notifyDataSetChanged();
+        //adapter.swapCursor(null);
     }
 }
+

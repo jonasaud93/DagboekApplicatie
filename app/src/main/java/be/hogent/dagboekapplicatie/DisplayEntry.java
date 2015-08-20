@@ -9,10 +9,13 @@ import android.widget.TextView;
 
 
 public class DisplayEntry extends Activity {
-
+    private DisplayDiaries displayDiaries;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_display_entry);
 
+        displayDiaries = new DisplayDiaries();
     }
 
 

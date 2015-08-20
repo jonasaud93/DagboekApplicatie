@@ -35,14 +35,25 @@ public class DiaryAdapter extends BaseAdapter {
 
 
     public DiaryAdapter(MyDB dba, Context context) {
-
+        inflater = LayoutInflater.from(context);
+        this.dba = dba;
+        diaries = new ArrayList<DiaryEntry>();
     }
 
     /**
      * Retrieves the data from the database and populates the arraylist
      */
     public  void setData(Cursor c){
+        DiaryEntry diaryEntry;
 
+        int titleIdx = c.getColumnIndex(Constants.COL_TITLE);
+        int dateIdx = c.getColumnIndex(Constants.COL_DATE);
+        int descriptionIdx = c.getColumnIndex(Constants.COL_DESCRIPTION);
+
+        while(c.moveToNext()) {
+            diaryEntry = new DiaryEntry(c.getString(titleIdx), c.getString(dateIdx), c.getString(descriptionIdx));
+            diaries.add(diaryEntry);
+        }
     }
 
     public void setDataToNull(){
@@ -56,7 +67,7 @@ public class DiaryAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-
+        return diaries.size();
     }
 
     /**
@@ -66,7 +77,7 @@ public class DiaryAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-
+        return diaries.get(position);
     }
 
     /**
@@ -81,7 +92,27 @@ public class DiaryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View view;
+        ViewHolder holder  = null;
 
+        if(convertView == null){
+            view = inflater.inflate(R.layout.diaryrow, parent, false);
+            holder = new ViewHolder();
+            holder.title = (TextView) view.findViewById(R.id.diary_title);
+            holder.date = (TextView) view.findViewById(R.id.diaryShowDate);
+
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
+        }
+
+        DiaryEntry entry = diaries.get(position);
+        holder.title.setText(entry.getTitle());
+        holder.date.setText(entry.getRecordedDate());
+        holder.setEntry(entry);
+
+        return view;
     }
 
     /**

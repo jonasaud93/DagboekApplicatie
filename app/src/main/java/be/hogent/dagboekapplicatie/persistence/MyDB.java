@@ -24,6 +24,7 @@ public class MyDB {
      */
     public MyDB(Context context) {
         dbHelper = new MyDBHelper(context, Constants.DATABASE_NAME, null, 1);
+        open();
     }
 
     /**
@@ -58,5 +59,13 @@ public class MyDB {
         String[] cols = {Constants.COL_ID, Constants.COL_TITLE,Constants.COL_DATE, Constants.COL_DESCRIPTION};
         Cursor cursor = db.query(Constants.TABLE_NAME, cols, null, null, null, null, null);
         return cursor;
+    }
+
+    public MyDBHelper getDbHelper() {
+        return dbHelper;
+    }
+
+    public void setDbHelper(MyDBHelper dbHelper) {
+        this.dbHelper = dbHelper;
     }
 }
